@@ -1,0 +1,17 @@
+{% extends "main.html"%}
+{% block content %}
+    <h1>{{ title }}</h1>
+    <h2>{{ family.description }}</h2>
+    <a href="/family/mod/{{ family.pk }}">Modyfikuj rodzinę</a>
+    <a href="/family/del/{{ family.pk }}">Usuń rodzinę</a>
+    <h2>Lista członków rodziny</h2>
+    <ul>
+        {% for member in family_members %}
+            <li><a href="/family_member/{{ member.pk }}">{{ member.name }} {{ member.surname }}</a></li>
+        {% empty %}
+           <li> Brak członków rodziny </li>
+        {% endfor %}
+    </ul>
+
+    <a href="family_member/add">Dodaj członka rodziny</a>
+{% endblock %}

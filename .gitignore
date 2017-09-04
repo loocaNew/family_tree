@@ -1,2 +1,4 @@
 migrations/
 *pycache*/
+.idea/
+*.sqlite3

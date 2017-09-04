@@ -1,0 +1,16 @@
+{% extends "main.html" %}
+
+{% block content %}
+    <h1>Lista rodzin</h1>
+    <p><a href="/family/add">Dodaj rodzinę</a></p>
+
+    <ul class="family_list">
+        {% for family in object_list %}
+            <li><a href="/family/{{ family.id }}"><b>{{ family.name }}</b></a></li>
+            <li class="family_description"><b>Opis:</b> {{ family.description }}</li>
+        {% empty %}
+            <li>Brak rodzin</li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "main.html" %}
+
+{% block content %}
+    <h1>Dodaj miasto</h1>
+    <p><a href="/city/add">Dodaj miasto</a></p>
+
+    <ul class="city_list">
+        {% for city in object_list %}
+            <li><a href="/city/{{ city.id }}"><b>{{ city.name }}</b></a></li>
+            <li class="city_description"><b>Opis:</b> {{ city.description }}</li>
+        {% empty %}
+            <li>Brak miast</li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}
