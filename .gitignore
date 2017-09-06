@@ -3,3 +3,4 @@ migrations/
 .idea/
 *.sqlite3
 admin/
+settings.py
