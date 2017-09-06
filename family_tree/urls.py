@@ -20,24 +20,41 @@ from app_family_tree.views import *
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^$', ListFamilies.as_view(), name='index'),
+
     #User management part
-    url(r'^login/$', views.login, {'template_name':'login.html'}, name='login'),
-    url(r'^logout$', views.logout_then_login, name='logout'),
-    url(r'^pass_change$', views.password_change, name='pass_change'),
+    url(r'^login/?$', views.login, {'template_name':'admin/login1.html'}, name='login'),
+    url(r'^logout/?$', views.logout_then_login, name='logout'),
+    url(r'^pass_change/?$', views.password_change, name='pass_change'),
     url(r'^user/add$', AddUser.as_view(), name='user_add'),
     url(r'^user/mod$', ModUser.as_view(), name='user_mod'),
+
     #Families management part
-    url(r'^$', ListFamilies.as_view(), name='families_list'),
-    # url(r'^index$', ListFamilies.as_view(), name='families_list1'),
+    url(r'^families$', ListFamilies.as_view(), name='families_list'),
     url(r'^family/(?P<family_id>(\d)+)$', detail_family, name='family_detail'),
     url(r'^family/add$', CreateFamily.as_view(), name='create_family'),
     url(r'^family/mod/(?P<pk>(\d)+)$', ModFamily.as_view(), name='modify_family'),
     url(r'^family/del/(?P<pk>(\d)+)$', DelFamily.as_view(), name='delete_family'),
+
     #Cities management part
-    url(r'^cities$', ListCities.as_view(), name='cities_list'),
+    url(r'^cities/?$', ListCities.as_view(), name='cities_list'),
     # url(r'^cities/author$', ListAuthorCities.as_view(), name='cities_author_list'),
-    # url(r'^city/(?P<pk>(\d)+)$', detail_city, name='city_detail'),
-    # url(r'^city/add$', CreateCity.as_view(), name='create_city'),
-    # url(r'^city/mod/(?P<pk>(\d)+)$', ModCity.as_view(), name='modify_city'),
-    # url(r'^city/del/(?P<pk>(\d)+)$', DelCity.as_view(), name='delete_city'),
+    url(r'^city/(?P<pk>(\d)+)$', detail_city, name='city_detail'),
+    url(r'^city/add$', CreateCity.as_view(), name='create_city'),
+    url(r'^city/mod/(?P<pk>(\d)+)$', ModCity.as_view(), name='modify_city'),
+    url(r'^city/del/(?P<pk>(\d)+)$', DelCity.as_view(), name='delete_city'),
+
+    # Persons management part
+    url(r'^persons/?$', ListPersons.as_view(), name='persons_list'),
+    url(r'^persons/family/(?P<pk>(\d)+)$', ListPersonsFamily.as_view(), name='persons_family_list'),
+    # url(r'^cities/author$', ListAuthorCities.as_view(), name='cities_author_list'),
+    url(r'^person/(?P<pk>(\d)+)$', detail_person, name='person_detail'),
+    url(r'^person/add$', CreatePerson.as_view(), name='create_person'),
+    url(r'^person/mod/(?P<pk>(\d)+)$', ModPerson.as_view(), name='modify_person'),
+    url(r'^person/del/(?P<pk>(\d)+)$', DelPerson.as_view(), name='delete_person'),
+    # Administration part
+    url(r'^persons/admin$', ListPersonsAuthor.as_view(), name='persons_author_list'),
+    url(r'^cities/admin$', ListCitiesAuthor.as_view(), name='cities_author_list'),
+    url(r'^families/admin$', ListFamiliesAuthor.as_view(), name='families_author_list'),
 ]
+

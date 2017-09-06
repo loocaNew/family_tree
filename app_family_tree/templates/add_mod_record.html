@@ -1,7 +1,7 @@
-{% extends "main.html"%}
+{% extends "index.html"%}
 {% block content %}
     <h1>{{ title }}</h1>
-    <form action="" method="post" style="background-color: {{ color }}">
+    <form action="" method="post">
         {% csrf_token %}
         <p>{{ form.as_p }}</p>
         <input type="submit" value="OK">

@@ -1,17 +1,19 @@
-{% extends "main.html"%}
+{% extends "index.html"%}
 {% block content %}
-    <h1>{{ title }}</h1>
-    <h2>{{ family.description }}</h2>
-    <a href="/family/mod/{{ family.pk }}">Modyfikuj rodzinę</a>
-    <a href="/family/del/{{ family.pk }}">Usuń rodzinę</a>
+    <h1>{{ family.name }}</h1>
+    <h2>Opis: {{ family.description }}</h2>
+
     <h2>Lista członków rodziny</h2>
     <ul>
-        {% for member in family_members %}
-            <li><a href="/family_member/{{ member.pk }}">{{ member.name }} {{ member.surname }}</a></li>
+        {% for person in persons %}
+            <li><a href="{% url 'person_detail' person.pk %}">{{ person.name }} {{ person.surname }}</a></li>
         {% empty %}
            <li> Brak członków rodziny </li>
         {% endfor %}
     </ul>
 
-    <a href="family_member/add">Dodaj członka rodziny</a>
+    <p><a href="{% url 'create_person' %}">Dodaj członka rodziny</a></p>
+    <a href="{% url 'modify_family' family.pk %}">Modyfikuj rodzinę</a> |
+    <a href="{% url 'delete_family' family.pk %}">Usuń rodzinę</a>
+
 {% endblock %}

@@ -1,0 +1,46 @@
+{% extends "index.html"%}
+{% block content %}
+
+    <h1>{{ person.name }} {{ person.surname }}</h1>
+    <h2>Opis: {{ person.description }}</h2>
+
+    <h2>Informacje szczegółowe</h2>
+        <ul>
+            <li><h3>Urodzony/a {{ person.birth_date|date:'j E Y' }} w {{ person.birth_city }}</h3></li>
+            {% if person.living %}
+            <li><h3>Zmarł/a {{ person.death_date }} w {{ person.death_city }}</h3></li>
+            {% endif %}
+            <li>Rodzice:
+                <ul>
+                    {% for parent in person.parents.all %}
+                        <li><a href="{% url 'person_detail' parent.pk %}">{{ parent.name }} {{ parent.surname }}</a></li>
+                    {% endfor %}
+                </ul>
+            </li>
+            <li>Rodzeństwo:
+                <ul>
+                    {% for sibling in person.siblings.all %}
+                        <li><a href="{% url 'person_detail' sibling.pk %}">{{ sibling.name }} {{ sibling.surname }}</a></li>
+                    {% endfor %}
+                </ul>
+            </li>
+            <li>Partnerzy życiowi:
+                <ul>
+                    {% for spouse in person.spouses.all %}
+                        <li><a href="{% url 'person_detail' spouse.pk %}">{{ spouse.name }} {{ spouse.surname }}</a></li>
+                    {% endfor %}
+                </ul>
+            </li>
+            <li>Dzieci:
+                <ul>
+                    {% for child in person.children.all %}
+                        <li><a href="{% url 'person_detail' child.pk %}">{{ child.name }} {{ child.surname }}</a></li>
+                    {% endfor %}
+                </ul>
+            </li>
+            <li><h3>Autor: {{ person.author.username }}, email: {{ person.author.email }}</h3></li>
+        </ul>
+
+        <a href="{% url 'modify_person' person.pk %}">Modyfikuj osobę</a>
+    | <a href="{% url 'delete_person' person.pk %}">Usuń osobę</a>
+{% endblock %}

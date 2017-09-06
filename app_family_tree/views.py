@@ -10,20 +10,29 @@ from .models import *
 from .forms import *
 
 # mixin checking if user is logined and if he is an autor of modified record
+
+
 class LoginAuthorMixin(AccessMixin):
     def dispatch(self, request, *args, **kwargs):
         actual_object = self.get_object()
         if not request.user.is_authenticated:
             return self.handle_no_permission()
         if request.user != actual_object.author:
-            return render(request, 'not_allowed.html', {'title': "Nie masz uprawnień dla tej rodziny"})
+            return render(request, 'not_allowed.html',
+                          {'title': "Nie masz uprawnień do modyfikacji {}".format(actual_object.name)})
         return super(LoginAuthorMixin, self).dispatch(request, *args, **kwargs)
 
 # User management part
 
+
 def user_allowed_families(user):
     families_list = user.families_set.all()
     return families_list
+
+
+def index(request):
+    families = user_allowed_families(request.user)
+    return render(request, 'index.html', {'families': families})
 
 
 class AddUser(View):
@@ -40,6 +49,7 @@ class AddUser(View):
             return render(request, 'user.html', {'form':form})
         return redirect('/login')
 
+
 class ModUser(LoginRequiredMixin, View):
 
     login_url = '/login'
@@ -54,7 +64,9 @@ class ModUser(LoginRequiredMixin, View):
             form.save()
         return redirect('/login')
 
+
 # Management model Families
+
 
 class ListFamilies(LoginRequiredMixin, ListView):
 
@@ -72,7 +84,6 @@ class ListFamilies(LoginRequiredMixin, ListView):
         context['title'] = 'Lista rodzin'
         return context
 
-    fields = ('name', 'description')
 
 @login_required(login_url='/login')
 def detail_family(request, family_id):
@@ -81,12 +92,13 @@ def detail_family(request, family_id):
         return render(request, 'not_allowed.html', {'title': "Nie masz uprawnień dla tej rodziny"})
 
     family = Families.objects.get(pk=family_id)
-    family_members = family.familymembers_set.all()
+    persons = family.persons_set.all()
     ctx = {
         'family': family,
-        'family_members': family_members
+        'persons': persons
     }
     return render(request, 'family_detail.html', ctx)
+
 
 class CreateFamily(LoginRequiredMixin, CreateView):
     login_url = '/login'
@@ -113,7 +125,7 @@ class CreateFamily(LoginRequiredMixin, CreateView):
 
         return super(CreateFamily, self).form_valid(form)
 
-    success_url = '/'
+    success_url = '/families'
 
 
 class ModFamily(LoginAuthorMixin, UpdateView):
@@ -133,7 +145,7 @@ class DelFamily(LoginAuthorMixin, DeleteView):
     login_url = '/login'
     template_name = 'add_mod_record.html'
     model = Families
-    success_url = '/'
+    success_url = '/families'
 
     def get_context_data(self, **kwargs):
         context = super(DelFamily, self).get_context_data(**kwargs)
@@ -141,6 +153,7 @@ class DelFamily(LoginAuthorMixin, DeleteView):
         return context
 
 # Management model Cities
+
 
 class ListCities(LoginRequiredMixin, ListView):
     model = Cities
@@ -154,20 +167,263 @@ class ListCities(LoginRequiredMixin, ListView):
         return context
     fields = ('name', 'description')
 
-# class ListAuthorCities(LoginRequiredMixin, ListView):
-#     model = Cities
-#     login_url = '/login'
-#     template_name = 'cities_list.html'
-#
-#     # filtrowanie listy wyświetlanych elementów
-#     def get_queryset(self):
-#         user = self.request.user
-#         queryset = user.cities_set.all()
-#         return queryset
-#     # nadpisanie contextu ListView
-#     def get_context_data(self, **kwargs):
-#         context = super(ListAuthorCities, self).get_context_data(**kwargs)
-#         context['title'] = 'Lista utworzonych przez {} miast'.format(self.request.user.name)
-#         return context
-#
-#     fields = ('name', 'description')
+
+@login_required(login_url='/login')
+def detail_city(request, pk):
+    city = Cities.objects.get(pk=pk)
+    families = user_allowed_families(request.user)
+    persons_birth = Persons.objects.none()
+    persons_death = Persons.objects.none()
+
+    for family in families:
+        persons_birth = persons_birth | city.birth_city.filter(family=family)
+        persons_death = persons_death | city.death_city.filter(family=family)
+    ctx = {
+        'city': city,
+        'persons_birth': persons_birth,
+        'persons_death': persons_death
+    }
+    return render(request, 'city_detail.html', ctx)
+
+
+class CreateCity(LoginRequiredMixin, CreateView):
+    login_url = '/login'
+    template_name = 'add_mod_record.html'
+    model = Cities
+    fields = ('name', 'description')
+
+    # nadpisanie contextu
+    def get_context_data(self, **kwargs):
+        context = super(CreateCity, self).get_context_data(**kwargs)
+        context['title'] = 'Formularz tworzenia miasta'
+        return context
+
+    # dodanie pól wypełnianych automatycznie na podstawie zalogowanego usera
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.author = self.request.user
+        self.object.save()
+        return super(CreateCity, self).form_valid(form)
+    success_url = '/cities'
+
+
+class ModCity(LoginAuthorMixin, UpdateView):
+    login_url = '/login'
+    template_name = 'add_mod_record.html'
+    model = Cities
+    fields = ('name', 'description')
+    success_url = '/cities'
+
+    def get_context_data(self, **kwargs):
+        context = super(ModCity, self).get_context_data(**kwargs)
+        context['title'] = 'Modyfikujesz miasto {}'.format(self.object.name)
+        return context
+
+
+class DelCity(LoginAuthorMixin, DeleteView):
+    login_url = '/login'
+    template_name = 'add_mod_record.html'
+    model = Cities
+    success_url = '/cities'
+
+    def get_context_data(self, **kwargs):
+        context = super(DelFamily, self).get_context_data(**kwargs)
+        context['title'] = 'Czy na pewno chcesz usunąć miasto {}?'.format(self.object.name)
+        return context
+
+
+# Management model Persons
+
+
+class ListPersons(LoginRequiredMixin, ListView):
+
+    login_url = '/login'
+    template_name = 'person_list.html'
+
+    # nadpisanie contextu ListView
+    def get_context_data(self, **kwargs):
+        context = super(ListPersons, self).get_context_data(**kwargs)
+        context['title'] = 'Lista członków rodzin'
+        return context
+
+    # filtrowanie listy wyświetlanych członków rodzin do przypisanych do rodziny
+    def get_queryset(self):
+        user = self.request.user
+        queryset = user.families_set.all()
+        return queryset
+
+    fields = ('name', 'description')
+
+
+class ListPersonsFamily(LoginRequiredMixin, ListView):
+
+    model = Persons
+    login_url = '/login'
+    template_name = 'person_family_list.html'
+
+    # nadpisanie contextu ListView
+    def get_context_data(self, **kwargs):
+        context = super(ListPersonsFamily, self).get_context_data(**kwargs)
+        family = Families.objects.get(pk=self.kwargs.get('pk'))
+        context['title'] = 'Lista członków rodziny'
+        context['family'] = family
+        if family not in self.request.user.families_set.all():
+            context['error'] = 'Brak uprawnień do tej rodziny'
+        else:
+            context['error'] = 'Nie przypisano żadnych osób do tej rodziny'
+        return context
+
+    # filtrowanie listy wyświetlanych rodzin do przypisanych
+    def get_queryset(self):
+        family = Families.objects.get(pk=self.kwargs.get('pk'))
+        if family not in self.request.user.families_set.all():
+             queryset = Persons.objects.none()
+        else:
+             queryset = family.persons_set.all()
+        return queryset
+    fields = ('name', 'description')
+
+
+@login_required(login_url='/login')
+def detail_person(request, pk):
+    person = Persons.objects.get(pk=pk)
+    families = user_allowed_families(request.user)
+
+    check = False
+    for family in families:
+        if person in family.persons_set.all():
+            check=True
+    if check == False:
+        return render(request, 'not_allowed.html',
+                      {'title': "Żądana osoba nie jest członkiem twoich rodzin"})
+    ctx = {
+        'person': person
+    }
+    return render(request, 'person_detail.html', ctx)
+
+
+class CreatePerson(LoginRequiredMixin, CreateView):
+    login_url = '/login'
+    template_name = 'add_mod_record.html'
+    model = Persons
+    fields = ('name',
+              'surname',
+              'description',
+              'deceased',
+              'sex',
+              'birth_date',
+              'birth_city',
+              'death_date',
+              'death_city',
+              'siblings',
+              'spouses',
+              'parents',
+              'family')
+
+    # nadpisanie contextu
+    def get_context_data(self, **kwargs):
+        context = super(CreatePerson, self).get_context_data(**kwargs)
+        context['title'] = 'Formularz tworzenia osoby'
+        return context
+
+    # dodanie pól wypełnianych automatycznie na podstawie zalogowanego usera
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.author = self.request.user
+        self.object.save()
+        return super(CreatePerson, self).form_valid(form)
+
+    success_url = '/persons'
+
+class ModPerson(LoginAuthorMixin, UpdateView):
+    login_url = '/login'
+    template_name = 'add_mod_record.html'
+    model = Persons
+    fields = ('name',
+              'surname',
+              'description',
+              'deceased',
+              'sex',
+              'birth_date',
+              'birth_city',
+              'death_date',
+              'death_city',
+              'siblings',
+              'spouses',
+              'parents',
+              'family')
+
+    success_url = '/persons'
+
+    def get_context_data(self, **kwargs):
+        context = super(ModPerson, self).get_context_data(**kwargs)
+        context['title'] = 'Modyfikujesz {} {}'.format(self.object.name, self.object.surname)
+        return context
+
+class DelPerson(LoginAuthorMixin, DeleteView):
+    login_url = '/login'
+    template_name = 'add_mod_record.html'
+    model = Persons
+    success_url = '/persons'
+
+    def get_context_data(self, **kwargs):
+        context = super(DelPerson, self).get_context_data(**kwargs)
+        context['title'] = 'Czy na pewno chcesz usunąć {} {}'.format(self.object.name, self.object.surname)
+        return context
+
+# Management model Stories
+# Management model Photos
+
+# List of objects where user is Author
+
+
+class ListPersonsAuthor(LoginRequiredMixin, ListView):
+    login_url = '/login'
+    template_name = 'person_list_author.html'
+
+    # nadpisanie contextu ListView
+    def get_context_data(self, **kwargs):
+        context = super(ListPersonsAuthor, self).get_context_data(**kwargs)
+        context['title'] = 'Lista członków rodzin'
+        return context
+
+    # filtrowanie listy wyświetlanych członków rodzin do przypisanych do rodziny
+    def get_queryset(self):
+        user = self.request.user
+        queryset = user.persons_set.all()
+        return queryset
+
+
+class ListCitiesAuthor(LoginRequiredMixin, ListView):
+    model = Cities
+    login_url = '/login'
+    template_name = 'cities_list.html'
+
+    # nadpisanie contextu ListView
+    def get_context_data(self, **kwargs):
+        context = super(ListCitiesAuthor, self).get_context_data(**kwargs)
+        context['title'] = 'Lista miast stworzonych przez użytkownika'
+        return context
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = user.cities_set.all()
+        return queryset
+
+
+class ListFamiliesAuthor(LoginRequiredMixin, ListView):
+    login_url = '/login'
+    template_name = 'families_list.html'
+
+    # filtrowanie listy wyświetlanych rodzin do przypisanych
+    def get_queryset(self):
+        user = self.request.user
+        queryset = user.author.all()
+        return queryset
+
+    # nadpisanie contextu ListView
+    def get_context_data(self, **kwargs):
+        context = super(ListFamiliesAuthor, self).get_context_data(**kwargs)
+        context['title'] = 'Lista rodzin stworzonych przez użytkownika'
+        return context
+

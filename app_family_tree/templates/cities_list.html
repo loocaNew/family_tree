@@ -1,16 +1,18 @@
-{% extends "main.html" %}
+{% extends "index.html" %}
 
 {% block content %}
-    <h1>Dodaj miasto</h1>
-    <p><a href="/city/add">Dodaj miasto</a></p>
+    <h1>{{ title }}</h1>
 
     <ul class="city_list">
         {% for city in object_list %}
-            <li><a href="/city/{{ city.id }}"><b>{{ city.name }}</b></a></li>
-            <li class="city_description"><b>Opis:</b> {{ city.description }}</li>
+            <li>
+                <h2><a href="{% url 'city_detail' city.pk %}"><b>{{ city.name }}</b></a></h2>
+                <h3>Opis: {{ city.description }}</h3>
+            </li>
         {% empty %}
             <li>Brak miast</li>
         {% endfor %}
     </ul>
 
+    <p><a href="{% url 'create_city' %}">Dodaj miasto</a></p>
 {% endblock %}

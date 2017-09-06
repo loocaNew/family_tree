@@ -11,4 +11,3 @@ class UserCreateForm(UserCreationForm):
         fields = ('username', 'email')
 
 
-

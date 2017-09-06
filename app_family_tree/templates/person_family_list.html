@@ -1,0 +1,17 @@
+{% extends "index.html" %}
+
+{% block content %}
+    <h1>Lista osób w rodzinie {{ family.name }}</h1>
+    <p><a href="{% url 'create_person' %}">Dodaj osobę</a></p>
+
+    <ul class="persons_list">
+        {% for person in object_list %}
+            <li><a href="{% url 'person_detail' person.id %}">
+                <b>{{ person.name }} {{ person.surname }}</b></a></li>
+            <li class="person_description">Opis: {{ person.description }}</li>
+        {% empty %}
+            <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}

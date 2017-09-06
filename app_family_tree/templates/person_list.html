@@ -1,0 +1,22 @@
+{% extends "index.html" %}
+
+{% block content %}
+    <h1>Lista osób w rodzinach</h1>
+    <ul>
+        {% for family in object_list %}
+            <li><h2><a href="{% url 'family_detail' family.pk %}"> Rodzina: {{ family.name }} </a></h2>
+                 <ul class="persons_list">
+                    {% for person in family.persons_set.all %}
+                        <li>
+                            <h3><a href="{% url 'person_detail' person.id %}">
+                                {{ person.name }} {{ person.surname }}</a></h3>
+                                Opis: {{ person.description }}</li>
+                    {% empty %}
+                        <li>Brak osób przypisanych do rodziny</li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% endfor %}
+    </ul>
+    <p><a href="{% url 'create_person' %}">Dodaj osobę</a></p>
+{% endblock %}

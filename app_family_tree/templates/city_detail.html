@@ -1,17 +1,38 @@
-{% extends "main.html"%}
+{% extends "index.html"%}
 {% block content %}
-    <h1>{{ title }}</h1>
-    <h2>{{ family.description }}</h2>
-    <a href="/family/mod/{{ family.pk }}">Modyfikuj rodzinę</a>
-    <a href="/family/del/{{ family.pk }}">Usuń rodzinę</a>
-    <h2>Lista członków rodziny</h2>
-    <ul>
-        {% for member in family_members %}
-            <li><a href="/family_member/{{ member.pk }}">{{ member.name }} {{ member.surname }}</a></li>
-        {% empty %}
-           <li> Brak członków rodziny </li>
-        {% endfor %}
-    </ul>
+    <h1>{{ city.name }}</h1>
+    <h2>{{ city.description }}</h2>
 
-    <a href="family_member/add">Dodaj członka rodziny</a>
+    <h2>Lista wystąpień miasta</h2>
+
+        <h3>Miasto urodzeń</h3>
+            <ul>
+                {% for member in persons_birth %}
+                    <li><a href="{% url 'person_detail' member.pk %}">{{ member.name }} {{ member.surname }}</a>,
+                        Rodzina:
+                        {% for family in  member.family.all %}
+                            <a href="{% url 'family_detail' family.pk %}">{{ family.name }}</a>
+                        {% endfor %}
+                    </li>
+                {% empty %}
+                   <li> Brak wystąpień </li>
+                {% endfor %}
+            </ul>
+
+        <h3>Miasto zgonu</h3>
+            <ul>
+                {% for member in persons_death %}
+                    <li><a href="{% url 'person_detail' member.pk %}">{{ member.name }} {{ member.surname }}</a>,
+                        Rodzina:
+                        {% for family in  member.family.all %}
+                            <a href="{% url 'family_detail' family.pk %}">{{ family.name }}</a>
+                        {% endfor %}
+                    </li>
+                {% empty %}
+                   <li> Brak wystąpień </li>
+                {% endfor %}
+            </ul>
+    <a href="{% url 'modify_city' city.pk %}">Modyfikuj miasto</a> |
+    <a href="{% url 'delete_city' city.pk %}">Usuń miasto</a>
+
 {% endblock %}

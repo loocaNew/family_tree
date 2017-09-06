@@ -1,0 +1,16 @@
+{% extends "index.html" %}
+
+{% block content %}
+    <h1>Lista osób stworzonych przez użytkownika</h1>
+    <ul>
+        {% for person in object_list %}
+            <li>
+                <h2><a href="{% url 'person_detail' person.id %}">
+                    {{ person.name }} {{ person.surname }}</a></h2>
+                    Opis: {{ person.description }}</li>
+        {% empty %}
+            <li>Brak osób stworzonych przez użykownika</li>
+        {% endfor %}
+    </ul>
+    <p><a href="{% url 'create_person' %}">Dodaj osobę</a></p>
+{% endblock %}
