@@ -23,7 +23,7 @@ urlpatterns = [
     url(r'^$', ListFamilies.as_view(), name='index'),
 
     #User management part
-    url(r'^login/?$', views.login, {'template_name':'admin/login1.html'}, name='login'),
+    url(r'^login/?$', views.login, {'template_name':'login.html'}, name='login'),
     url(r'^logout/?$', views.logout_then_login, name='logout'),
     url(r'^pass_change/?$', views.password_change, name='pass_change'),
     url(r'^user/add$', AddUser.as_view(), name='user_add'),
