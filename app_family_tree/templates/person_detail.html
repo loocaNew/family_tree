@@ -26,9 +26,15 @@
             </li>
             <li>Partnerzy życiowi:
                 <ul>
-                    {% for spouse in person.spouses.all %}
-                        <li><a href="{% url 'person_detail' spouse.pk %}">{{ spouse.name }} {{ spouse.surname }}</a></li>
-                    {% endfor %}
+                    {% if person.spouses.all %}
+                        {% for spouse in person.spouses.all %}
+                            <li><a href="{% url 'person_detail' spouse.pk %}">{{ spouse.name }} {{ spouse.surname }}</a></li>
+                        {% endfor %}
+                    {% else %}
+                        {% for spouse in person.spouses_set.all %}
+                            <li><a href="{% url 'person_detail' spouse.pk %}">{{ spouse.name }} {{ spouse.surname }}</a></li>
+                        {% endfor %}
+                    {% endif %}
                 </ul>
             </li>
             <li>Dzieci:
