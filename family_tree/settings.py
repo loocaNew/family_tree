@@ -25,7 +25,7 @@ SECRET_KEY = '7di84w770u@6*c08b!r$&c##x2nb-(ss-ca8_ezgo(b-xcnd4*'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['cosnaspam.pythonanywhere.com',]
+ALLOWED_HOSTS = []
 
 
 # Application definition

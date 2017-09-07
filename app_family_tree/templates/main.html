@@ -4,8 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %}</title>
+
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static "admin/test/base.css" %}">
+    {% block add_head %}{% endblock %}
 </head>
 
 <body>

@@ -1,0 +1,20 @@
+{% extends "index.html" %}
+
+
+{% block add_head %}
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    {% load static %}
+    <link rel="stylesheet" href="{% static "admin/style.css" %}">
+    <link href="http://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+{% endblock %}
+
+
+{% block content %}
+
+    {{ list|safe }}
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="http://www.jqueryscript.net/demo/Animated-Tree-View-Plugin-For-jQuery-Bootstrap-3-MultiNestedLists/MultiNestedList.js"></script>
+
+{% endblock %}

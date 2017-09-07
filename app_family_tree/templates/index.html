@@ -2,7 +2,7 @@
 
 {% block left_menu %}
 
-        <h1><a href="/views">Widoki !!!!!!! to do</a></h1>
+        <h1><a href="{% url 'tree_init' %}">Drzewa genealogiczne</a></h1>
 
         <h1>Listy</h1>
         <ul>
@@ -10,10 +10,10 @@
             <li><h2><a href="{% url 'cities_list' %}">Lista miast</a></h2></li>
             <li><h2><a href="{% url 'persons_list' %}">Lista członków rodzin</a></h2></li>
         </ul>
-        <h1>Administracja</h1>
 
+        <h1>Administracja</h1>
         <ul>
-                <li><h2><a href="{% url 'families_author_list' %}">Lista rodzin</a></h2></li>
+            <li><h2><a href="{% url 'families_author_list' %}">Lista rodzin</a></h2></li>
             <li><h2><a href="{% url 'cities_author_list' %}">Lista miast</a></h2></li>
             <li><h2><a href="{% url 'persons_author_list' %}">Lista członków rodzin</a></h2></li>
         </ul>

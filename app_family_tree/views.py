@@ -132,7 +132,7 @@ class ModFamily(LoginAuthorMixin, UpdateView):
     login_url = '/login'
     template_name = 'add_mod_record.html'
     model = Families
-    fields = ('name', 'description', 'user')
+    fields = ('name', 'description', 'user', 'senior')
     success_url = '/'
 
     def get_context_data(self, **kwargs):
@@ -427,3 +427,145 @@ class ListFamiliesAuthor(LoginRequiredMixin, ListView):
         context['title'] = 'Lista rodzin stworzonych przez użytkownika'
         return context
 
+#algorytm z ustawionym seniorem rodu
+
+# class TreeNode:
+#     def __init__(self, id_, name):
+#         self.id = id_
+#         self.name = name
+#         self.children = []
+#
+#     def __str__(self):
+#         return "{}:{}".format(self.id, self.name)
+
+
+def show_tree(node, level=0, d=None, parent=None):
+    if d==None:
+        d = {}
+    if not len(d):
+        d[level] = [['<ul class="sitemap">', '<li>', '<a href="/person/', node.pk, '">',
+                     ' {} {}'.format(node.name, node.surname),'</a>', '</li>', '</ul>', parent.pk]]
+    elif level in d:
+        d[level].append(
+            ['<ul>', '<li>', '<a href="/person/', node.pk, '">',
+             ' {} {}'.format(node.name, node.surname),'</a>', '</li>', '</ul>', parent.pk])
+    else:
+        d[level] = [['<ul>', '<li>', '<a href="/person/', node.pk, '">',
+                     ' {} {}'.format(node.name, node.surname),'</a>', '</li>', '</ul>', parent.pk]]
+    if node.children.all():
+        for element in node.children.all():
+            show_tree(element, level + 1, d, node)
+
+def showTree(node, level=0):
+    print(node, level)
+    if node.children.all():
+        for element in node.children.all():
+            showTree(element, level+1)
+
+def family_tree(request, pk=None):
+    families = request.user.families_set.all()
+
+    if pk == None:
+        pk = families[0].pk
+
+
+    family = Families.objects.get(pk=pk)
+    senior = family.senior
+    d = {}
+    show_tree(node=senior, d=d, parent=senior)
+    # print(d)
+    new_list = []
+    new_list.extend(d[0][0][:-1])
+    print(new_list)
+    for j in range(1, len(d)): #przywróć len(d)
+        list_temp = []
+        for i in range(len(d[j])):
+            if i == 0:
+                list_temp.extend(d[j][i][:-2])
+                print(list_temp)
+                if i == (len(d[j])-1):
+                    parent_node = d[j][i][-1]
+                    # print(parent_node)
+                    list_temp.append('</ul>')
+                    print(list_temp)
+                    idx = new_list.index(parent_node) + 4
+                    new_list[idx:idx] = list_temp
+                    list_temp = []
+            elif d[j][i][-1] == d[j][i-1][-1]:
+                list_temp.extend(d[j][i][1:-2])
+                print(list_temp)
+                if i == (len(d[j])-1):
+                    parent_node = d[j][i][-1]
+                    # print(parent_node)
+                    list_temp.append('</ul>')
+                    print(list_temp)
+                    idx = new_list.index(parent_node) + 4
+                    new_list[idx:idx] = list_temp
+                    list_temp = []
+            else:
+                parent_node = d[j][i-1][-1]
+                # print(parent_node)
+                idx = new_list.index(parent_node) + 4
+                list_temp.append('</ul>')
+                print(list_temp)
+                new_list[idx:idx] = list_temp
+                list_temp = []
+                list_temp.extend(d[j][i][:-1])
+                if i == (len(d[j])-1):
+                    parent_node = d[j][i][-1]
+                    # print(parent_node)
+                    idx = new_list.index(parent_node) + 4
+                    new_list[idx:idx] = list_temp
+                    list_temp = []
+
+    final = []
+    for element in new_list:
+        final.append(str(element))
+    ctx={
+        'list':''.join(final),
+        'families':families
+    }
+
+
+    return render(request, 'test.html', ctx)
+
+
+# def family_tree (request, pk):
+#
+#     family = Families.objects.get(pk=pk)
+#     persons = family.persons_set.all()
+#     senior = family.senior
+#
+#     tree_map = [{
+#         'node':0,
+#         'element_id':0
+#         'node_elements':0
+#         'children':[],
+#         'spouses':[]
+#     }]
+#
+#
+#     object = senior
+#     i = 1
+#
+#
+#     while check:
+#         check = False
+#         if i == 1:
+#             tree_map[i - 1]['node'] = i
+#             tree_map[i - 1]['node_elements'] = len(object.children.all())
+#             tree_map[i - 1]['element_id'] = object.pk
+#             for child in object.children.all():
+#                 tree_map[i-1].['children'].append(child.pk)
+#             for spouse in object.spouses.all():
+#                 tree_map[i-1].['spouses'].append(spouse.pk)
+#             for spouse in object.spouses_set.all():
+#                 tree_map[i-1].['spouses'].append(spouse.pk)
+#             i += 1
+#         else:
+#             for child in persons.get.(pk=tree_map[i-2]['element_id']):
+#                 tree_map[i - 1]['node'] = i
+#                 if not tree_map[i - 1]['node_elements']:
+#                     tree_map[i - 1]['node_elements'] = len(object.children.all())
+#
+#                 tree_map[i - 1]['element_id'] = object.pk

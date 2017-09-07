@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Drzewa genealogiczne rodziny</title>
+<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+{% load static %}
+<link rel="stylesheet" href="{% static 'Animated-Tree/style.css' %}">
+<link href="http://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+</head>
+<body>
+
+<div id="left_panel">
+
+        {% for family in families %}
+            <p><a href="{% url 'tree' family.pk %}">Rodzina {{ family.name }}</a></p>
+        {% endfor %}
+        <p><a href="{% url 'index' %}">main page</a></p>
+
+</div>
+
+<div id="content">
+    {{ list|safe }}
+</div>
+
+<div id="footer">
+    {% if user.is_authenticated %}
+        <p align="left">
+            <a href="{% url 'logout' %}">Logout</a> |
+            <a href="{% url 'user_mod' %}"><b>{{ user.username }}</b></a>
+        </p>
+    {% else %}
+        <p align="left">
+            <a href="{% url 'user_add' %}">Register</a> |
+            <a href="{% url 'login' %}">Login</a>
+        </p>
+    {% endif %}
+</div>
+
+</body>
+</html>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://www.jqueryscript.net/demo/Animated-Tree-View-Plugin-For-jQuery-Bootstrap-3-MultiNestedLists/MultiNestedList.js"></script>

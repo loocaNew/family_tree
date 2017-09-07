@@ -2,6 +2,7 @@
 
 {% block content %}
     <h1>Lista osób w rodzinach</h1>
+    <p><a href="{% url 'create_person' %}">Dodaj osobę</a></p>
     <ul>
         {% for family in object_list %}
             <li><h2><a href="{% url 'family_detail' family.pk %}"> Rodzina: {{ family.name }} </a></h2>
@@ -17,6 +18,5 @@
                 </ul>
             </li>
         {% endfor %}
-    </ul>
-    <p><a href="{% url 'create_person' %}">Dodaj osobę</a></p>
+    </ul>   
 {% endblock %}
