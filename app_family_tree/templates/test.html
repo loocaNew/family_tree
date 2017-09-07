@@ -13,13 +13,14 @@
 <div id="left_panel">
 
         {% for family in families %}
-            <p><a href="{% url 'tree' family.pk %}">Rodzina {{ family.name }}</a></p>
+            <p><a href="{% url 'tree' family.pk %}"> {{ family.name }} </a></p>
         {% endfor %}
         <p><a href="{% url 'index' %}">main page</a></p>
 
 </div>
 
 <div id="content">
+    <h1>{{ Family.name }}</h1>
     {{ list|safe }}
 </div>
 

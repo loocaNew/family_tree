@@ -55,14 +55,14 @@ class ModUser(LoginRequiredMixin, View):
     login_url = '/login'
 
     def get(self, request):
-        form = UserChangeForm()
+        form = UpdateProfile(instance=request.user)
         return render(request, 'user.html', {'form':form})
 
     def post(self, request):
-        form = UserChangeForm(request.POST)
+        form = UpdateProfile(request.POST)
         if form.is_valid():
             form.save()
-        return redirect('/login')
+        return redirect('/families')
 
 
 # Management model Families
@@ -536,7 +536,8 @@ def family_tree(request, pk=None):
         final.append(str(element))
     ctx={
         'list':''.join(final),
-        'families':families
+        'families':families,
+        'family':family
     }
 
 
