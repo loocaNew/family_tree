@@ -480,32 +480,38 @@ def family_tree(request, pk=None):
     senior = family.senior
     d = {}
     show_tree(node=senior, d=d, parent=senior)
+    # print(len(d))
+    # print(d[0])
+    # print(d[1])
+    # print(d[2])
+    # print(d[3])
+
     # print(d)
     new_list = []
     new_list.extend(d[0][0][:-1])
-    print(new_list)
-    for j in range(1, len(d)): #przywróć len(d)
+    # print(new_list)
+    for j in range(1, len(d)): #len(d)
         list_temp = []
         for i in range(len(d[j])):
             if i == 0:
-                list_temp.extend(d[j][i][:-2])
-                print(list_temp)
+                list_temp.extend(d[j][i][:-2])  #initial list node creation (wihout ending /ul)
+                # print(list_temp)
                 if i == (len(d[j])-1):
                     parent_node = d[j][i][-1]
                     # print(parent_node)
                     list_temp.append('</ul>')
-                    print(list_temp)
+                    # print(list_temp)
                     idx = new_list.index(parent_node) + 4
                     new_list[idx:idx] = list_temp
                     list_temp = []
             elif d[j][i][-1] == d[j][i-1][-1]:
                 list_temp.extend(d[j][i][1:-2])
-                print(list_temp)
+                # print(list_temp)
                 if i == (len(d[j])-1):
                     parent_node = d[j][i][-1]
                     # print(parent_node)
                     list_temp.append('</ul>')
-                    print(list_temp)
+                    # print(list_temp)
                     idx = new_list.index(parent_node) + 4
                     new_list[idx:idx] = list_temp
                     list_temp = []
@@ -514,10 +520,10 @@ def family_tree(request, pk=None):
                 # print(parent_node)
                 idx = new_list.index(parent_node) + 4
                 list_temp.append('</ul>')
-                print(list_temp)
+                # print(list_temp)
                 new_list[idx:idx] = list_temp
                 list_temp = []
-                list_temp.extend(d[j][i][:-1])
+                list_temp.extend(d[j][i][:-2])
                 if i == (len(d[j])-1):
                     parent_node = d[j][i][-1]
                     # print(parent_node)

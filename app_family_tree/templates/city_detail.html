@@ -28,7 +28,7 @@
                         Rodzina:
                         <ul>
                             {% for family in  member.family.all %}
-                                <li></li><a href="{% url 'family_detail' family.pk %}">{{ family.name }}</a></li>
+                                <li><a href="{% url 'family_detail' family.pk %}">{{ family.name }}</a></li>
                             {% endfor %}
                         </ul>
                     </li>
