@@ -468,8 +468,8 @@ def family_tree(request, pk=None):
     if pk == None:
         pk = families[0].pk
 
-
     family = Families.objects.get(pk=pk)
+
     senior = family.senior
     d = {}
     show_tree(node=senior, d=d, parent=senior)

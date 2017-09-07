@@ -10,9 +10,11 @@
                 {% for member in persons_birth %}
                     <li><a href="{% url 'person_detail' member.pk %}">{{ member.name }} {{ member.surname }}</a>,
                         Rodzina:
-                        {% for family in  member.family.all %}
-                            <a href="{% url 'family_detail' family.pk %}">{{ family.name }}</a>
-                        {% endfor %}
+                        <ul>
+                            {% for family in  member.family.all %}
+                                <li><a href="{% url 'family_detail' family.pk %}">{{ family.name }}</a></li>
+                            {% endfor %}
+                        </ul>
                     </li>
                 {% empty %}
                    <li> Brak wystąpień </li>
@@ -24,9 +26,11 @@
                 {% for member in persons_death %}
                     <li><a href="{% url 'person_detail' member.pk %}">{{ member.name }} {{ member.surname }}</a>,
                         Rodzina:
-                        {% for family in  member.family.all %}
-                            <a href="{% url 'family_detail' family.pk %}">{{ family.name }}</a>
-                        {% endfor %}
+                        <ul>
+                            {% for family in  member.family.all %}
+                                <li></li><a href="{% url 'family_detail' family.pk %}">{{ family.name }}</a></li>
+                            {% endfor %}
+                        </ul>
                     </li>
                 {% empty %}
                    <li> Brak wystąpień </li>
