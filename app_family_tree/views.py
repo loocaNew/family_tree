@@ -172,12 +172,19 @@ class ListCities(LoginRequiredMixin, ListView):
 def detail_city(request, pk):
     city = Cities.objects.get(pk=pk)
     families = user_allowed_families(request.user)
-    persons_birth = Persons.objects.none()
-    persons_death = Persons.objects.none()
+    persons_birth = city.birth_city.all()
+    persons_death = city.death_city.all()
 
-    for family in families:
-        persons_birth = persons_birth | city.birth_city.filter(family=family)
-        persons_death = persons_death | city.death_city.filter(family=family)
+    # for person in city.birth_city.all():
+    #     if person.family in families:
+    #         persons_birth = persons_birth | person
+    #
+    # for person in city.death_city.all():
+    #     if person.family in families:
+    #         persons_death = persons_death | person
+
+
+
     ctx = {
         'city': city,
         'persons_birth': persons_birth,
