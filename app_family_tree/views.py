@@ -539,7 +539,7 @@ def family_tree(request, pk=None):
         'families':families,
         'family':family
     }
-
+    print(family.name)
 
     return render(request, 'test.html', ctx)
 

@@ -2,7 +2,7 @@
 
 {% block content %}
     <h1>{{ title }}</h1>
-
+    <p><a href="{% url 'create_family' %}">Dodaj rodzinę</a></p>
     <ul class="family_list">
         {% for family in object_list %}
             <li>
@@ -13,6 +13,6 @@
             <li>Nie jesteś przypisany do żadnej z rodzin</li>
         {% endfor %}
     </ul>
-    <p><a href="{% url 'create_family' %}">Dodaj rodzinę</a></p>
+
 
 {% endblock %}
