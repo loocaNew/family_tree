@@ -33,7 +33,7 @@
                         </ul>
                     </li>
                 {% empty %}
-                   <li> Brak wystąpień </li>
+                   <li> {{ error|default:"Brak wystąpień" }}</li>
                 {% endfor %}
             </ul>
     <a href="{% url 'modify_city' city.pk %}">Modyfikuj miasto</a> |

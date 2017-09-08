@@ -410,6 +410,7 @@ class ListCitiesAuthor(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(ListCitiesAuthor, self).get_context_data(**kwargs)
         context['title'] = 'Lista miast stworzonych przez użytkownika'
+        context['error'] = 'Brak miast stworzonych przez użytkownika'
         return context
 
     def get_queryset(self):

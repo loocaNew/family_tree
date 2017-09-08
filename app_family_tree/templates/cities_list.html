@@ -10,7 +10,7 @@
                 <h3>Opis: {{ city.description }}</h3>
             </li>
         {% empty %}
-            <li>Brak miast</li>
+            <li> {{ error|default:"Brak wystąpień" }}</li>
         {% endfor %}
     </ul>
 
