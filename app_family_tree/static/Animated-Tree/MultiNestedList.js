@@ -1,10 +1,10 @@
 // Select the main list and add the class "hasSubmenu" in each LI that contains an UL
-$('ul').each(function(){
+$('#family_tree ul').each(function(){
   $this = $(this);
   $this.find("li").has("ul").addClass("hasSubmenu");
 });
 // Find the last li in each level
-$('li:last-child').each(function(){
+$('#family_tree li:last-child').each(function(){
   $this = $(this);
   // Check if LI has children
   if ($this.children('ul').length === 0){

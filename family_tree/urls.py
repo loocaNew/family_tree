@@ -60,8 +60,5 @@ urlpatterns = [
     # Tree view part
     url(r'^tree/?$', family_tree, name='tree_init'),
     url(r'^tree/(?P<pk>(\d)+)$', family_tree, name='tree'),
-
-    #Bootstrap part
-    url(r'^boot/main$', boot_view, name = 'boot_main')
 ]
 

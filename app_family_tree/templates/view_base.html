@@ -1,0 +1,27 @@
+{% extends "main.html" %}
+
+
+{% block add_head %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static "Animated-Tree/style.css" %}">
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+{% endblock %}
+
+
+{% block content %}
+
+    <div id="left_panel">
+        {% for family in families %}
+        <p><a href="{% url 'tree' family.pk %}"> {{ family.name }} </a></p>
+        {% endfor %}
+        <p><a href="{% url 'index' %}">main page</a></p>
+    </div>
+
+    <div id="family_tree">
+        {{ list|safe }}
+    </div>
+
+    {% load static %}
+    <script src="{% static "Animated-Tree/MultiNestedList.js" %}"></script>
+
+{% endblock %}
