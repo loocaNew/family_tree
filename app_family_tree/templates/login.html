@@ -1,0 +1,33 @@
+{% extends "main.html"%}
+{% block add_head %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static "css/login.css" %}">
+{% endblock %}
+
+{% block content %}
+    {% if user.is_authenticated %}
+        <div class="bg-warning">
+            You are authenticated as <b>{{ user.username }}</b>, but are not authorized to
+            access this page. Would you like to login to a different account?
+        </div>
+    {% endif %}
+
+    <div class="modal-dialog">
+        <div class="loginmodal-container">
+            <h1>Login to Your Account</h1><br>
+          <form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
+              <p>{{ form.username.errors }}</p>
+              <p>{{ form.username.label_tag }} {{ form.username }}</p>
+              <p>{{ form.password.errors }}</p>
+              <p>{{ form.password.label_tag }} {{ form.password }}</p>
+              <input type="hidden" name="next" value="/"/>
+            <input type="submit" name="login" class="login loginmodal-submit" value="Login">
+          </form>
+
+          <div class="login-help">
+              <a href="{% url 'user_add' %}">Register</a> -
+              <a href="{% url 'pass_change' %}">Forgot Password</a>
+          </div>
+        </div>
+    </div>
+{% endblock %}

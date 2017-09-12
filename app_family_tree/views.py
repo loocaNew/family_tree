@@ -464,6 +464,15 @@ def family_tree(request, pk=None):
 
     family = Families.objects.get(pk=pk)
 
+    if family.senior == None:
+        ctx = {
+            'list': '<p><b>Ustaw seniora rodu</b></p>',
+            'families': families,
+            'family': family
+        }
+
+        return render(request, 'view_base.html', ctx)
+
     senior = family.senior
     d = {}
     show_tree(node=senior, d=d, parent=senior)

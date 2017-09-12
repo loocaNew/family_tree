@@ -20,10 +20,10 @@ from app_family_tree.views import *
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^$', ListFamilies.as_view(), name='index'),
+    url(r'^$', family_tree, name='index'),
 
     #User management part
-    url(r'^login/?$', views.login, {'template_name':'registration/login1.html'}, name='login'),
+    url(r'^login/?$', views.login, {'template_name':'login.html'}, name='login'),
     url(r'^logout/?$', views.logout_then_login, name='logout'),
     url(r'^pass_change/?$', views.password_change, {'post_change_redirect':'/families'},  name='pass_change'),
     url(r'^user/add$', AddUser.as_view(), name='user_add'),
