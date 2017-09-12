@@ -1,6 +1,7 @@
 {% extends "main.html"%}
 {% block content %}
-
+    <a href="{% url 'modify_person' person.pk %}">Modyfikuj osobę</a> |
+    <a href="{% url 'delete_person' person.pk %}">Usuń osobę</a>
     <h2>{{ person.name }} {{ person.surname }}</h2>
     <p><b>Opis:</b> {{ person.description }}</p>
 
@@ -45,9 +46,6 @@
                 </ul>
             </li>
             <li>{{ person.get_deceased_display }}</li>
-            <li><b>Autor: {{ person.author.username }}, email: {{ person.author.email }}</b></li>
         </ul>
-
-        <a href="{% url 'modify_person' person.pk %}">Modyfikuj osobę</a>
-    | <a href="{% url 'delete_person' person.pk %}">Usuń osobę</a>
+        <p><b>Autor: {{ person.author.username }}, email: {{ person.author.email }}</b></p>
 {% endblock %}

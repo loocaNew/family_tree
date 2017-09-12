@@ -514,3 +514,5 @@ def family_tree(request, pk=None):
     return render(request, 'view_base.html', ctx)
 
 
+def render_test(request):
+    return render(request, 'test.html')

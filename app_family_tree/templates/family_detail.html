@@ -1,5 +1,8 @@
 {% extends "main.html"%}
 {% block content %}
+    <a href="{% url 'modify_family' family.pk %}">Modyfikuj rodzinę</a> |
+    <a href="{% url 'delete_family' family.pk %}">Usuń rodzinę</a> |
+    <a href="{% url 'create_person' %}">Dodaj członka rodziny</a>
     <h2>{{ family.name }}</h2>
     <p><b>Opis:</b> {{ family.description }}</p>
 
@@ -11,9 +14,5 @@
            <li> Brak członków rodziny </li>
         {% endfor %}
     </ul>
-
-    <p><a href="{% url 'create_person' %}">Dodaj członka rodziny</a></p>
-    <a href="{% url 'modify_family' family.pk %}">Modyfikuj rodzinę</a> |
-    <a href="{% url 'delete_family' family.pk %}">Usuń rodzinę</a>
-
+    <p><b>Autor: {{ family.author.username }}, email: {{ family.author.email }}</b></p>
 {% endblock %}

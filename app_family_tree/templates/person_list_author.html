@@ -6,9 +6,8 @@
     <ul>
         {% for person in object_list %}
             <li>
-                <h2><a href="{% url 'person_detail' person.id %}">
-                    {{ person.name }} {{ person.surname }}</a></h2>
-                    <h3>Opis: {{ person.description }}</h3></li>
+                <a href="{% url 'person_detail' person.id %}">{{ person.name }} {{ person.surname }}</a>
+                <br><b>Opis: </b> {{ person.description }}</li>
         {% empty %}
             <li>Brak osób stworzonych przez użykownika</li>
         {% endfor %}

@@ -1,5 +1,7 @@
 {% extends "main.html"%}
 {% block content %}
+    <a href="{% url 'modify_city' city.pk %}">Modyfikuj miasto</a> |
+    <a href="{% url 'delete_city' city.pk %}">Usuń miasto</a>
     <h2>{{ city.name }}</h2>
     <p><b>Opis: </b>{{ city.description }}</p>
 
@@ -35,8 +37,8 @@
                 {% empty %}
                    <li> {{ error|default:"Brak wystąpień" }}</li>
                 {% endfor %}
+
             </ul>
-    <a href="{% url 'modify_city' city.pk %}">Modyfikuj miasto</a> |
-    <a href="{% url 'delete_city' city.pk %}">Usuń miasto</a>
+        <p><b>Autor: {{ city.author.username }}, email: {{ city.author.email }}</b></p>
 
 {% endblock %}

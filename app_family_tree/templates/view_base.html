@@ -14,10 +14,10 @@
         {% for family in families %}
         <p><a href="{% url 'tree' family.pk %}"> {{ family.name }} </a></p>
         {% endfor %}
-        <p><a href="{% url 'index' %}">main page</a></p>
     </div>
 
     <div id="family_tree">
+    <p>{{ family.name }}</p>
         {{ list|safe }}
     </div>
 
