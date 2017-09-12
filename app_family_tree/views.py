@@ -25,6 +25,8 @@ class LoginAuthorMixin(AccessMixin):
 # User management part
 
 
+
+
 def user_allowed_families(user):
     families_list = user.families_set.all()
     return families_list
@@ -584,3 +586,6 @@ def family_tree(request, pk=None):
 #                     tree_map[i - 1]['node_elements'] = len(object.children.all())
 #
 #                 tree_map[i - 1]['element_id'] = object.pk
+
+def boot_view(request):
+    return render (request, 'main_boot.html')
