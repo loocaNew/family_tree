@@ -1,13 +1,13 @@
-{% extends "index.html" %}
+{% extends "main.html" %}
 
 {% block content %}
-    <h1>{{ title }}</h1>
+    <h2>{{ title }}</h2>
     <p><a href="{% url 'create_family' %}">Dodaj rodzinę</a></p>
     <ul class="family_list">
         {% for family in object_list %}
             <li>
-                <h2><a href="{% url 'family_detail' family.pk %}"><b>{{ family.name }}</b></a></h2>
-                <h3><b>Opis:</b> {{ family.description }}</h3>
+                <h5><a href="{% url 'family_detail' family.pk %}"><b>{{ family.name }}</b></a></h5>
+                <p><b>Opis:</b> {{ family.description }}</p>
             </li>
         {% empty %}
             <li>Nie jesteś przypisany do żadnej z rodzin</li>

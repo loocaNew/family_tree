@@ -1,9 +1,9 @@
-{% extends "index.html"%}
+{% extends "main.html"%}
 {% block content %}
-    <h1>{{ family.name }}</h1>
-    <h2>Opis: {{ family.description }}</h2>
+    <h2>{{ family.name }}</h2>
+    <p><b>Opis:</b> {{ family.description }}</p>
 
-    <h2>Lista członków rodziny</h2>
+    <h5>Lista członków rodziny</h5>
     <ul>
         {% for person in persons %}
             <li><a href="{% url 'person_detail' person.pk %}">{{ person.name }} {{ person.surname }}</a></li>

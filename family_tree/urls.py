@@ -58,7 +58,7 @@ urlpatterns = [
     url(r'^cities/admin$', ListCitiesAuthor.as_view(), name='cities_author_list'),
     url(r'^families/admin$', ListFamiliesAuthor.as_view(), name='families_author_list'),
     # Tree view part
-    url(r'^tree$', family_tree, name='tree_init'),
+    url(r'^tree/?$', family_tree, name='tree_init'),
     url(r'^tree/(?P<pk>(\d)+)$', family_tree, name='tree'),
 
     #Bootstrap part

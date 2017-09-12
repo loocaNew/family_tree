@@ -1,14 +1,14 @@
-{% extends "index.html"%}
+{% extends "main.html"%}
 {% block content %}
 
-    <h1>{{ person.name }} {{ person.surname }}</h1>
-    <h2>Opis: {{ person.description }}</h2>
+    <h2>{{ person.name }} {{ person.surname }}</h2>
+    <p><b>Opis:</b> {{ person.description }}</p>
 
-    <h2>Informacje szczegółowe</h2>
+    <h5><b>Informacje szczegółowe</b></h5>
         <ul>
-            <li><h3>Urodzony/a {{ person.birth_date|date:'j E Y' }} w {{ person.birth_city }}</h3></li>
+            <li><b>Urodzony/a {{ person.birth_date|date:'j E Y' }} w {{ person.birth_city }}</b></li>
             {% if person.living %}
-            <li><h3>Zmarł/a {{ person.death_date }} w {{ person.death_city }}</h3></li>
+            <li><b>Zmarł/a {{ person.death_date }} w {{ person.death_city }}</b></li>
             {% endif %}
             <li>Rodzice:
                 <ul>
@@ -45,7 +45,7 @@
                 </ul>
             </li>
             <li>{{ person.get_deceased_display }}</li>
-            <li><h3>Autor: {{ person.author.username }}, email: {{ person.author.email }}</h3></li>
+            <li><b>Autor: {{ person.author.username }}, email: {{ person.author.email }}</b></li>
         </ul>
 
         <a href="{% url 'modify_person' person.pk %}">Modyfikuj osobę</a>

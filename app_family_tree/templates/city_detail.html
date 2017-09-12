@@ -1,11 +1,11 @@
-{% extends "index.html"%}
+{% extends "main.html"%}
 {% block content %}
-    <h1>{{ city.name }}</h1>
-    <h2>{{ city.description }}</h2>
+    <h2>{{ city.name }}</h2>
+    <p><b>Opis: </b>{{ city.description }}</p>
 
-    <h2>Lista wystąpień miasta</h2>
+    <h5>Lista wystąpień miasta</h5>
 
-        <h3>Miasto urodzeń</h3>
+        <p><b>Miasto urodzeń</b></p>
             <ul>
                 {% for member in persons_birth %}
                     <li><a href="{% url 'person_detail' member.pk %}">{{ member.name }} {{ member.surname }}</a>,
@@ -21,7 +21,7 @@
                 {% endfor %}
             </ul>
 
-        <h3>Miasto zgonu</h3>
+        <p><b>Miasto zgonu</b></p>
             <ul>
                 {% for member in persons_death %}
                     <li><a href="{% url 'person_detail' member.pk %}">{{ member.name }} {{ member.surname }}</a>,
