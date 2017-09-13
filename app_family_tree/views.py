@@ -24,16 +24,17 @@ class LoginAuthorMixin(AccessMixin):
 
 # User management part
 
+def allowed_persons(request):
+    all_families = request.user.families_set.all()
+    all_persons = Persons.objects.filter(family__in=all_families)
+    return all_persons
 
-
-
-def user_allowed_families(user):
-    families_list = user.families_set.all()
-    return families_list
-
+def allowed_families(request):
+    all_families = request.user.families_set.all()
+    return all_families
 
 def index(request):
-    families = user_allowed_families(request.user)
+    families = allowed_families(request)
     return render(request, 'index.html', {'families': families})
 
 
@@ -90,7 +91,7 @@ class ListFamilies(LoginRequiredMixin, ListView):
 @login_required(login_url='/login')
 def detail_family(request, family_id):
 
-    if Families.objects.get(pk=family_id) not in user_allowed_families(request.user):
+    if Families.objects.get(pk=family_id) not in allowed_families(request):
         return render(request, 'not_allowed.html', {'title': "Nie masz uprawnień dla tej rodziny"})
 
     family = Families.objects.get(pk=family_id)
@@ -173,20 +174,9 @@ class ListCities(LoginRequiredMixin, ListView):
 @login_required(login_url='/login')
 def detail_city(request, pk):
     city = Cities.objects.get(pk=pk)
-    families = user_allowed_families(request.user)
+    families = allowed_families(request)
     persons_birth = city.birth_city.all()
     persons_death = city.death_city.all()
-
-    # for person in city.birth_city.all():
-    #     if person.family in families:
-    #         persons_birth = persons_birth | person
-    #
-    # for person in city.death_city.all():
-    #     if person.family in families:
-    #         persons_death = persons_death | person
-
-
-
     ctx = {
         'city': city,
         'persons_birth': persons_birth,
@@ -296,7 +286,7 @@ class ListPersonsFamily(LoginRequiredMixin, ListView):
 @login_required(login_url='/login')
 def detail_person(request, pk):
     person = Persons.objects.get(pk=pk)
-    families = user_allowed_families(request.user)
+    families = allowed_families(request)
 
     check = False
     for family in families:
@@ -311,63 +301,86 @@ def detail_person(request, pk):
     return render(request, 'person_detail.html', ctx)
 
 
-class CreatePerson(LoginRequiredMixin, CreateView):
-    login_url = '/login'
-    template_name = 'add_mod_record.html'
-    model = Persons
-    fields = ('name',
-              'surname',
-              'description',
-              'deceased',
-              'sex',
-              'birth_date',
-              'birth_city',
-              'death_date',
-              'death_city',
-              'siblings',
-              'spouses',
-              'parents',
-              'family')
+class CreateModPerson(View):
 
-    # nadpisanie contextu
-    def get_context_data(self, **kwargs):
-        context = super(CreatePerson, self).get_context_data(**kwargs)
-        context['title'] = 'Formularz tworzenia osoby'
-        return context
+    def get(self, request, pk=None):
 
-    # dodanie pól wypełnianych automatycznie na podstawie zalogowanego usera
-    def form_valid(self, form):
-        self.object = form.save(commit=False)
-        self.object.author = self.request.user
-        self.object.save()
-        return super(CreatePerson, self).form_valid(form)
+        if pk==None:
+            form = PersonForm()
+        else:
+            person = Persons.objects.get(pk=pk)
+            form = PersonForm(instance=person, initial={
+                'sex': int(person.sex),
+                'deceased': int(person.deceased)
+            })
 
-    success_url = '/persons'
+            # form.fields['sex'].initial = person.sex
 
-class ModPerson(LoginAuthorMixin, UpdateView):
-    login_url = '/login'
-    template_name = 'add_mod_record.html'
-    model = Persons
-    fields = ('name',
-              'surname',
-              'description',
-              'deceased',
-              'sex',
-              'birth_date',
-              'birth_city',
-              'death_date',
-              'death_city',
-              'siblings',
-              'spouses',
-              'parents',
-              'family')
+            print(person.sex)
+            print(person.deceased)
 
-    success_url = '/persons'
+        form.fields['family'].queryset = allowed_families(request)
+        form.fields['parents'].queryset = allowed_persons(request)
+        form.fields['siblings'].queryset = allowed_persons(request)
+        form.fields['spouses'].queryset = allowed_persons(request)
 
-    def get_context_data(self, **kwargs):
-        context = super(ModPerson, self).get_context_data(**kwargs)
-        context['title'] = 'Modyfikujesz {} {}'.format(self.object.name, self.object.surname)
-        return context
+        ctx = {
+            'form': form
+        }
+        return render(request, 'add_mod_person.html', ctx)
+
+    def post(self, request, pk=None):
+
+        if pk == None:
+            form = PersonForm(request.POST)
+
+            if form.is_valid():
+
+                object = form.save(commit=False)
+                object.author = request.user
+                list_families = request.POST.getlist('family')
+                list_siblings = request.POST.getlist('siblings')
+                list_parents = request.POST.getlist('parents')
+                list_spouses = request.POST.getlist('spouses')
+                object.save()
+                object.family.add(*list_families)
+                object.siblings.add(*list_siblings)
+                object.parents.add(*list_parents)
+                object.spouses.add(*list_spouses)
+                object.save()
+
+                for sibling in object.siblings.all():
+                    if object not in sibling.siblings.all():
+                        sibling.siblings.add(object)
+
+                for spouse in object.spouses.all():
+                    if object not in spouse.spouses.all():
+                        spouse.spouses.add(object)
+
+
+                return redirect('/persons')
+            else:
+                ctx = {'form': form}
+                return render(request, 'add_mod_person.html', ctx)
+        else:
+            instance = Persons.objects.get(pk=pk)
+            form = PersonForm(request.POST, instance=instance)
+            if form.is_valid():
+                form.save()
+
+                for sibling in instance.siblings.all():
+                    if instance not in sibling.siblings.all():
+                        sibling.siblings.add(pk)
+
+                for spouse in instance.spouses.all():
+                    if instance not in spouse.spouses.all():
+                        spouse.spouses.add(pk)
+
+                return redirect('/persons')
+            else:
+                ctx = {'form': form}
+                return render(request, 'add_mod_person.html', ctx)
+
 
 class DelPerson(LoginAuthorMixin, DeleteView):
     login_url = '/login'
@@ -455,7 +468,7 @@ def show_tree(node, level=0, d=None, parent=None):
         for element in node.children.all():
             show_tree(element, level + 1, d, node)
 
-
+@login_required(login_url='/login')
 def family_tree(request, pk=None):
     families = request.user.families_set.all()
 

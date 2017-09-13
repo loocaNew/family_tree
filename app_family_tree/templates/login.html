@@ -1,7 +1,7 @@
 {% extends "main.html"%}
 {% block add_head %}
     {% load static %}
-    <link rel="stylesheet" href="{% static "css/login.css" %}">
+    <link rel="stylesheet" href="{% static "css/additional.css" %}">
 {% endblock %}
 
 {% block content %}
@@ -15,8 +15,14 @@
     <div class="modal-dialog">
         <div class="loginmodal-container">
             <h1>Login to Your Account</h1><br>
-          <form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
-              <p>{{ form.username.errors }}</p>
+          <form action="#" method="post" id="login-form">{% csrf_token %}
+              {% if form.non_field_errors %}
+              {% for error in form.non_field_errors %}
+              <p class="errornote">
+                  {{ error }}
+              </p>
+              {% endfor %}
+              {% endif %}
               <p>{{ form.username.label_tag }} {{ form.username }}</p>
               <p>{{ form.password.errors }}</p>
               <p>{{ form.password.label_tag }} {{ form.password }}</p>

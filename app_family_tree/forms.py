@@ -31,8 +31,52 @@ class UpdateProfile(forms.ModelForm):
     def save(self, commit=True):
         user = super(RegistrationForm, self).save(commit=False)
         user.email = self.cleaned_data['email']
-
         if commit:
             user.save()
-
         return user
+
+
+class DateTypeInput(forms.DateInput):
+    input_type = 'date'
+
+
+class PersonForm(forms.ModelForm):
+
+    # family = forms.ModelMultipleChoiceField(queryset=Families.objects.none())
+
+    class Meta:
+
+        model = Persons
+        fields = ['name',
+                  'surname',
+                  'description',
+                  'deceased',
+                  'sex',
+                  'birth_date',
+                  'birth_city',
+                  'death_date',
+                  'death_city',
+                  'parents',
+                  'siblings',
+                  'spouses',
+                  'family']
+
+        widgets = {
+            'sex': forms.RadioSelect,
+            'deceased': forms.RadioSelect,
+            'birth_date': DateTypeInput,
+            'death_date': DateTypeInput,
+        }
+
+    def __init__(self, *args, **kwargs):
+        # user = kwargs.pop('user')
+        super(PersonForm, self).__init__(*args, **kwargs)
+        for field, value in self.fields.items():
+            value.widget.attrs['class'] = 'form-control'
+        # self.fields['family'].queryset = Families.objects.filter(user=user)
+        # self.fields['siblings'].queryset = Persons.objects.filter(family__in=user.families_set.all())
+        # self.fields['parents'].queryset = Persons.objects.filter(family__in=user.families_set.all())
+        # self.fields['spouses'].queryset = Persons.objects.filter(family__in=user.families_set.all())
+
+
+

@@ -50,9 +50,12 @@ urlpatterns = [
     url(r'^persons/family/(?P<pk>(\d)+)$', ListPersonsFamily.as_view(), name='persons_family_list'),
     # url(r'^cities/author$', ListAuthorCities.as_view(), name='cities_author_list'),
     url(r'^person/(?P<pk>(\d)+)$', detail_person, name='person_detail'),
-    url(r'^person/add$', CreatePerson.as_view(), name='create_person'),
-    url(r'^person/mod/(?P<pk>(\d)+)$', ModPerson.as_view(), name='modify_person'),
+    # url(r'^person/add$', CreatePerson.as_view(), name='create_person1'),
+    # url(r'^person/mod/(?P<pk>(\d)+)$', ModPerson.as_view(), name='modify_person1'),
     url(r'^person/del/(?P<pk>(\d)+)$', DelPerson.as_view(), name='delete_person'),
+    url(r'^person/add1$', CreateModPerson.as_view(), name='create_person'),
+    url(r'^person/mod1/(?P<pk>(\d)+)$', CreateModPerson.as_view(), name='modify_person'),
+
     # Administration part
     url(r'^persons/admin$', ListPersonsAuthor.as_view(), name='persons_author_list'),
     url(r'^cities/admin$', ListCitiesAuthor.as_view(), name='cities_author_list'),

@@ -35,12 +35,12 @@ class Persons(models.Model):
     name = models.CharField(max_length=64)
     surname = models.CharField(max_length=64)
     description = models.TextField()
-    deceased = models.BooleanField(choices=LIVING, default=False)
-    sex = models.BooleanField(choices=SEX, default=True)
-    birth_date = models.DateField(blank=True, null=True)
+    deceased = models.BooleanField(choices=LIVING, default=0, verbose_name="deceased or living")
+    sex = models.BooleanField(choices=SEX, default=0, verbose_name="gender")
+    birth_date = models.DateField(blank=True, null=True, verbose_name="date of birth")
     birth_city = models.ForeignKey('Cities', related_name='birth_city',
                                    verbose_name='city of birth', blank=True, null=True)
-    death_date = models.DateField(blank=True, null=True)
+    death_date = models.DateField(blank=True, null=True, verbose_name="date of death")
     death_city = models.ForeignKey('Cities', related_name='death_city',
                                    verbose_name='city of death', blank=True, null=True)
     siblings = models.ManyToManyField('Persons', related_name='siblings_set', blank=True)
