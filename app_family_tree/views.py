@@ -186,40 +186,6 @@ def detail_city(request, pk):
     return render(request, 'city_detail.html', ctx)
 
 
-class CreateCity(LoginRequiredMixin, CreateView):
-    login_url = '/login'
-    template_name = 'add_mod_record.html'
-    model = Cities
-    fields = ('name', 'description')
-
-    # nadpisanie contextu
-    def get_context_data(self, **kwargs):
-        context = super(CreateCity, self).get_context_data(**kwargs)
-        context['title'] = 'Formularz tworzenia miasta'
-        return context
-
-    # dodanie pól wypełnianych automatycznie na podstawie zalogowanego usera
-    def form_valid(self, form):
-        self.object = form.save(commit=False)
-        self.object.author = self.request.user
-        self.object.save()
-        return super(CreateCity, self).form_valid(form)
-    success_url = '/cities'
-
-
-class ModCity(LoginAuthorMixin, UpdateView):
-    login_url = '/login'
-    template_name = 'add_mod_record.html'
-    model = Cities
-    fields = ('name', 'description')
-    success_url = '/cities'
-
-    def get_context_data(self, **kwargs):
-        context = super(ModCity, self).get_context_data(**kwargs)
-        context['title'] = 'Modyfikujesz miasto {}'.format(self.object.name)
-        return context
-
-
 class CreateModCity(LoginRequiredMixin, View):
     def get(self, request, pk=None):
         if pk is None:
@@ -230,7 +196,10 @@ class CreateModCity(LoginRequiredMixin, View):
                 return render(request, 'not_allowed.html',
                               {'title': "Nie masz uprawnień do modyfikacji {}".format(city)})
             form = CityForm(instance=city)
-        return render(request, 'add_mod_city.html', {'form':form})
+        ctx = {
+            'form': form
+        }
+        return render(request, 'add_mod_city.html', ctx)
 
     def post(self, request, pk=None):
         if pk is None:
@@ -239,7 +208,6 @@ class CreateModCity(LoginRequiredMixin, View):
                 city = form.save(commit=False)
                 city.author = request.user
                 city.save()
-                return redirect('/cities')
             else:
                 return render(request, 'add_mod_city.html', {'form': form})
         else:
@@ -250,9 +218,9 @@ class CreateModCity(LoginRequiredMixin, View):
             form = CityForm(request.POST, instance=city)
             if form.is_valid():
                 form.save()
-                return redirect('/cities')
             else:
                 return render(request, 'add_mod_city.html', {'form':form})
+        return redirect('/cities')
 
 class DelCity(LoginAuthorMixin, DeleteView):
     login_url = '/login'
@@ -354,9 +322,6 @@ class CreateModPerson(LoginRequiredMixin, View):
             })
 
             # form.fields['sex'].initial = person.sex
-
-            print(person.sex)
-            print(person.deceased)
 
         form.fields['family'].queryset = allowed_families(request)
         form.fields['parents'].queryset = allowed_persons(request)
@@ -485,6 +450,9 @@ class ListFamiliesAuthor(LoginRequiredMixin, ListView):
         return context
 
 
+# rendering family tree part
+
+
 def show_tree(node, level=0, d=None, parent=None):
     if d==None:
         d = {}
@@ -501,6 +469,7 @@ def show_tree(node, level=0, d=None, parent=None):
     if node.children.all():
         for element in node.children.all():
             show_tree(element, level + 1, d, node)
+
 
 @login_required(login_url='/login')
 def family_tree(request, pk=None):
@@ -568,6 +537,9 @@ def family_tree(request, pk=None):
     print(family.name)
 
     return render(request, 'view_base.html', ctx)
+
+
+# testing area
 
 
 def render_test(request):

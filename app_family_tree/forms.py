@@ -78,9 +78,22 @@ class CityForm(forms.ModelForm):
         fields = ['name',
                   'description']
 
+    def __init__(self, *args, **kwargs):
+        super(CityForm, self).__init__(*args, **kwargs)
+        for field, value in self.fields.items():
+            value.widget.attrs['class'] = 'form-control'
+
+
 
 class FamilyForm(forms.ModelForm):
     class Meta:
         model = Families
         fields = ['name',
-                  'description']
+                  'description',
+                  'user',
+                  'senior']
+
+    def __init__(self, *args, **kwargs):
+        super(FamilyForm, self).__init__(*args, **kwargs)
+        for field, value in self.fields.items():
+            value.widget.attrs['class'] = 'form-control'

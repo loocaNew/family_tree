@@ -15,6 +15,16 @@
             {{ form.description.label_tag }}
             {{ form.description }}
         </div>
+        <div class="form-group">
+            {{ form.user.errors }}
+            {{ form.user.label_tag }}
+            {{ form.user }}
+        </div>
+        <div class="form-group">
+            {{ form.senior.errors }}
+            {{ form.senior.label_tag }}
+            {{ form.senior }}
+        </div>
         <button id="submit" type="submit" value="submit" class="btn btn-dark center">Submit</button>
     </form>
 

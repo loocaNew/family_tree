@@ -3,7 +3,7 @@
 {% block content %}
 
     <form class="form-group" method="post">{% csrf_token %}
-        <legend>Enter details of person here.<br>
+        <legend>Enter person details here.<br>
         Use Ctrl+ in multi choice fields</legend>
         <div class="form-group">
             {{ form.name.errors }}
