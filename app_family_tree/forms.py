@@ -10,6 +10,12 @@ class UserCreateForm(UserCreationForm):
         model = User
         fields = ('username', 'email')
 
+    def __init__(self, *args, **kwargs):
+        super(UserCreateForm, self).__init__(*args, **kwargs)
+        for field, value in self.fields.items():
+            value.widget.attrs['class'] = 'form-control'
+
+
 class UpdateProfile(forms.ModelForm):
     username = forms.CharField(required=True)
     email = forms.EmailField(required=True)

@@ -23,20 +23,23 @@ class LoginAuthorMixin(AccessMixin):
         return super(LoginAuthorMixin, self).dispatch(request, *args, **kwargs)
 
 
-# User management part
-
 def allowed_persons(request):
     all_families = request.user.families_set.all()
     all_persons = Persons.objects.filter(family__in=all_families)
     return all_persons
 
+
 def allowed_families(request):
     all_families = request.user.families_set.all()
     return all_families
 
+
 def index(request):
     families = allowed_families(request)
     return render(request, 'index.html', {'families': families})
+
+
+# User management part
 
 
 class AddUser(View):
@@ -512,8 +515,10 @@ def show_tree(node, level=0, d=None, parent=None):
 
 @login_required(login_url='/login')
 def family_tree(request, pk=None):
-    families = request.user.families_set.all()
+    if not request.user.families_set.all():
+        return redirect ('/families')
 
+    families = request.user.families_set.all()
     if pk == None:
         pk = families[0].pk
 
@@ -573,7 +578,6 @@ def family_tree(request, pk=None):
         'families': families,
         'family': family
     }
-    print(family.name)
 
     return render(request, 'view_base.html', ctx)
 
