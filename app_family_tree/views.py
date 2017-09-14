@@ -586,4 +586,4 @@ def family_tree(request, pk=None):
 
 
 def render_test(request):
-    return render(request, 'test.html')
+    return render(request, 'main1.html')

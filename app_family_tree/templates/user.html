@@ -1,9 +1,11 @@
 {% extends "main.html"%}
 {% block content %}
-    <form action="" method="post" class="form-group">
+    <div class="card">
+    <form method="post" class="form-group card-body">
         {% csrf_token %}
         <p>{{ form.as_p }}</p>
         <button id="submit" type="submit" value="submit" class="btn btn-dark center">Submit</button>
     </form>
     <p><a href="{% url 'pass_change' %}">Change password</a></p>
+    </div>
 {% endblock %}

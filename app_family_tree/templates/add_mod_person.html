@@ -2,7 +2,8 @@
 
 {% block content %}
 
-    <form class="form-group" method="post">{% csrf_token %}
+    <div class="card">
+    <form class="form-group card-body" method="post">{% csrf_token %}
         <legend>Enter person details here.<br>
         Use Ctrl+ in multi choice fields</legend>
         <div class="form-group">
@@ -78,5 +79,5 @@
         <button id="submit" type="submit" value="submit" class="btn btn-dark center">Submit</button>
 
     </form>
-
+</div>
 {% endblock %}
