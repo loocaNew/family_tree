@@ -22,6 +22,7 @@ class LoginAuthorMixin(AccessMixin):
                           {'title': "Nie masz uprawnień do modyfikacji {}".format(actual_object.name)})
         return super(LoginAuthorMixin, self).dispatch(request, *args, **kwargs)
 
+
 # User management part
 
 def allowed_persons(request):
@@ -219,6 +220,38 @@ class ModCity(LoginAuthorMixin, UpdateView):
         return context
 
 
+class CreateModCity(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        if pk is None:
+            form = CityForm
+        else:
+            city = Cities.objects.get(pk=pk)
+            if city.author != request.user:
+                return render(request, 'not_allowed.html',
+                              {'title': "Nie masz uprawnień do modyfikacji {}".format(city)})
+            form = CityForm(instance=city)
+        return render(request, 'add_mod_city.html', {'form':form})
+
+    def post(self, request, pk):
+        if pk is None:
+            form = CityForm(request.POST)
+            if form.is_valid():
+                city = form.save(commit=False)
+                city.author = request.user
+                city.save()
+                return redirect('/cities')
+            else:
+                return render(request, 'add_mod_city.html', {'form': form})
+        else:
+            city = Cities.objects.get(pk=pk)
+            if city.author != request.user:
+                return render(request, 'not_allowed.html',
+                              {'title': "Nie masz uprawnień do modyfikacji {}".format(city)})
+
+            form = CityForm(instance=city)
+
+        return render (request, 'add_mod_city.html', {'form':form})
+
 class DelCity(LoginAuthorMixin, DeleteView):
     login_url = '/login'
     template_name = 'add_mod_record.html'
@@ -226,7 +259,7 @@ class DelCity(LoginAuthorMixin, DeleteView):
     success_url = '/cities'
 
     def get_context_data(self, **kwargs):
-        context = super(DelFamily, self).get_context_data(**kwargs)
+        context = super(DelCity, self).get_context_data(**kwargs)
         context['title'] = 'Czy na pewno chcesz usunąć miasto {}?'.format(self.object.name)
         return context
 
@@ -301,14 +334,18 @@ def detail_person(request, pk):
     return render(request, 'person_detail.html', ctx)
 
 
-class CreateModPerson(View):
+class CreateModPerson(LoginRequiredMixin, View):
 
     def get(self, request, pk=None):
 
-        if pk==None:
+        if pk is None:
             form = PersonForm()
         else:
             person = Persons.objects.get(pk=pk)
+            if person.author != request.user:
+                return render(request, 'not_allowed.html',
+                              {'title': "Nie masz uprawnień do modyfikacji {}".format(person)})
+
             form = PersonForm(instance=person, initial={
                 'sex': int(person.sex),
                 'deceased': int(person.deceased)
@@ -331,11 +368,10 @@ class CreateModPerson(View):
 
     def post(self, request, pk=None):
 
-        if pk == None:
+        if pk is None:
             form = PersonForm(request.POST)
 
             if form.is_valid():
-
                 object = form.save(commit=False)
                 object.author = request.user
                 list_families = request.POST.getlist('family')
@@ -348,22 +384,21 @@ class CreateModPerson(View):
                 object.parents.add(*list_parents)
                 object.spouses.add(*list_spouses)
                 object.save()
-
                 for sibling in object.siblings.all():
                     if object not in sibling.siblings.all():
                         sibling.siblings.add(object)
-
                 for spouse in object.spouses.all():
                     if object not in spouse.spouses.all():
                         spouse.spouses.add(object)
-
-
                 return redirect('/persons')
             else:
                 ctx = {'form': form}
                 return render(request, 'add_mod_person.html', ctx)
         else:
             instance = Persons.objects.get(pk=pk)
+            if instance.author != request.user:
+                return render(request, 'not_allowed.html',
+                              {'title': "Nie masz uprawnień do modyfikacji {}".format(instance)})
             form = PersonForm(request.POST, instance=instance)
             if form.is_valid():
                 form.save()

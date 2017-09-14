@@ -65,6 +65,6 @@ urlpatterns = [
     url(r'^tree/(?P<pk>(\d)+)$', family_tree, name='tree'),
 
     #test part
-    url(r'^test/?$', render_test, name='test'),
+    # url(r'^test/?$', render_test, name='test'),
 ]
 

@@ -41,11 +41,7 @@ class DateTypeInput(forms.DateInput):
 
 
 class PersonForm(forms.ModelForm):
-
-    # family = forms.ModelMultipleChoiceField(queryset=Families.objects.none())
-
     class Meta:
-
         model = Persons
         fields = ['name',
                   'surname',
@@ -74,9 +70,17 @@ class PersonForm(forms.ModelForm):
         for field, value in self.fields.items():
             value.widget.attrs['class'] = 'form-control'
         # self.fields['family'].queryset = Families.objects.filter(user=user)
-        # self.fields['siblings'].queryset = Persons.objects.filter(family__in=user.families_set.all())
-        # self.fields['parents'].queryset = Persons.objects.filter(family__in=user.families_set.all())
-        # self.fields['spouses'].queryset = Persons.objects.filter(family__in=user.families_set.all())
 
 
+class CityForm(forms.ModelForm):
+    class Meta:
+        model = Cities
+        fields = ['name',
+                  'description']
 
+
+class FamilyForm(forms.ModelForm):
+    class Meta:
+        model = Families
+        fields = ['name',
+                  'description']
