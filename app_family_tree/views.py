@@ -145,6 +145,45 @@ class ModFamily(LoginAuthorMixin, UpdateView):
         return context
 
 
+class CreateModFamily(LoginRequiredMixin, View):
+
+    def get(self, request, pk=None):
+        if pk == None:
+            form = FamilyForm(initial={'user':(request.user.pk,)})
+            form.fields['senior'].queryset = allowed_persons(request)
+        else:
+            family = Families.objects.get(pk=pk)
+            if family.author != request.user:
+                return render(request, 'not_allowed.html',
+                              {'title': "Nie masz uprawnień do modyfikacji {}".format(family)})
+            form = FamilyForm(instance=family)
+            form.fields['senior'].queryset = allowed_persons(request)
+        ctx = {'form':form}
+        return render(request, 'add_mod_family.html', ctx)
+
+    def post(self, request, pk=None):
+        if pk == None:
+            form = FamilyForm(request.POST)
+            if form.is_valid():
+                family = form.save(commit=False)
+                family.author = request.user
+                family.save()
+            else:
+                ctx = {'form': form}
+                return render(request, 'add_mod_family.html', ctx)
+        else:
+            family = Families.objects.get(pk=pk)
+            if family.author != request.user:
+                return render(request, 'not_allowed.html',
+                              {'title': "Nie masz uprawnień do modyfikacji {}".format(family)})
+            form = FamilyForm(request.POST, instance=family)
+            if form.is_valid():
+                form.save()
+            else:
+                ctx = {'form': form}
+                return render(request, 'add_mod_family.html', ctx)
+        return redirect('/families')
+
 class DelFamily(LoginAuthorMixin, DeleteView):
     login_url = '/login'
     template_name = 'add_mod_record.html'
@@ -176,8 +215,8 @@ class ListCities(LoginRequiredMixin, ListView):
 def detail_city(request, pk):
     city = Cities.objects.get(pk=pk)
     families = allowed_families(request)
-    persons_birth = city.birth_city.all()
-    persons_death = city.death_city.all()
+    persons_birth = city.birth_city.filter(family__in=families)
+    persons_death = city.death_city.filter(family__in=families)
     ctx = {
         'city': city,
         'persons_birth': persons_birth,

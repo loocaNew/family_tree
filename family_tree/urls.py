@@ -19,7 +19,7 @@ from django.contrib.auth import views
 from app_family_tree.views import *
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
+    url(r'^adminos/', admin.site.urls),
     url(r'^$', family_tree, name='index'),
 
     #User management part
@@ -33,9 +33,13 @@ urlpatterns = [
     #Families management part
     url(r'^families$', ListFamilies.as_view(), name='families_list'),
     url(r'^family/(?P<family_id>(\d)+)$', detail_family, name='family_detail'),
-    url(r'^family/add$', CreateFamily.as_view(), name='create_family'),
-    url(r'^family/mod/(?P<pk>(\d)+)$', ModFamily.as_view(), name='modify_family'),
+    # url(r'^family/add$', CreateFamily.as_view(), name='create_family'),
+    # url(r'^family/mod/(?P<pk>(\d)+)$', ModFamily.as_view(), name='modify_family'),
     url(r'^family/del/(?P<pk>(\d)+)$', DelFamily.as_view(), name='delete_family'),
+    url(r'^family/add$', CreateModFamily.as_view(), name='create_family'),
+    url(r'^family/mod/(?P<pk>(\d)+)$', CreateModFamily.as_view(), name='modify_family'),
+
+
 
     #Cities management part
     url(r'^cities/?$', ListCities.as_view(), name='cities_list'),

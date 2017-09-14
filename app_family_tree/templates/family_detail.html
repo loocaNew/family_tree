@@ -5,7 +5,7 @@
     <a href="{% url 'create_person' %}">Dodaj członka rodziny</a>
     <h2>{{ family.name }}</h2>
     <p><b>Opis:</b> {{ family.description }}</p>
-
+    <h5>Senior rodu: <b>{{ family.senior }}</b></h5>
     <h5>Lista członków rodziny</h5>
     <ul>
         {% for person in persons %}
