@@ -41,9 +41,12 @@ urlpatterns = [
     url(r'^cities/?$', ListCities.as_view(), name='cities_list'),
     # url(r'^cities/author$', ListAuthorCities.as_view(), name='cities_author_list'),
     url(r'^city/(?P<pk>(\d)+)$', detail_city, name='city_detail'),
-    url(r'^city/add$', CreateCity.as_view(), name='create_city'),
-    url(r'^city/mod/(?P<pk>(\d)+)$', ModCity.as_view(), name='modify_city'),
+    # url(r'^city/add$', CreateCity.as_view(), name='create_city'),
+    # url(r'^city/mod/(?P<pk>(\d)+)$', ModCity.as_view(), name='modify_city'),
     url(r'^city/del/(?P<pk>(\d)+)$', DelCity.as_view(), name='delete_city'),
+    url(r'^city/add$', CreateModCity.as_view(), name='create_city'),
+    url(r'^city/mod/(?P<pk>(\d)+)$', CreateModCity.as_view(), name='modify_city'),
+
 
     # Persons management part
     url(r'^persons/?$', ListPersons.as_view(), name='persons_list'),
@@ -53,8 +56,8 @@ urlpatterns = [
     # url(r'^person/add$', CreatePerson.as_view(), name='create_person1'),
     # url(r'^person/mod/(?P<pk>(\d)+)$', ModPerson.as_view(), name='modify_person1'),
     url(r'^person/del/(?P<pk>(\d)+)$', DelPerson.as_view(), name='delete_person'),
-    url(r'^person/add1$', CreateModPerson.as_view(), name='create_person'),
-    url(r'^person/mod1/(?P<pk>(\d)+)$', CreateModPerson.as_view(), name='modify_person'),
+    url(r'^person/add$', CreateModPerson.as_view(), name='create_person'),
+    url(r'^person/mod/(?P<pk>(\d)+)$', CreateModPerson.as_view(), name='modify_person'),
 
     # Administration part
     url(r'^persons/admin$', ListPersonsAuthor.as_view(), name='persons_author_list'),

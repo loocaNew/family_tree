@@ -221,7 +221,7 @@ class ModCity(LoginAuthorMixin, UpdateView):
 
 
 class CreateModCity(LoginRequiredMixin, View):
-    def get(self, request, pk):
+    def get(self, request, pk=None):
         if pk is None:
             form = CityForm
         else:
@@ -232,7 +232,7 @@ class CreateModCity(LoginRequiredMixin, View):
             form = CityForm(instance=city)
         return render(request, 'add_mod_city.html', {'form':form})
 
-    def post(self, request, pk):
+    def post(self, request, pk=None):
         if pk is None:
             form = CityForm(request.POST)
             if form.is_valid():
@@ -247,10 +247,12 @@ class CreateModCity(LoginRequiredMixin, View):
             if city.author != request.user:
                 return render(request, 'not_allowed.html',
                               {'title': "Nie masz uprawnień do modyfikacji {}".format(city)})
-
-            form = CityForm(instance=city)
-
-        return render (request, 'add_mod_city.html', {'form':form})
+            form = CityForm(request.POST, instance=city)
+            if form.is_valid():
+                form.save()
+                return redirect('/cities')
+            else:
+                return render(request, 'add_mod_city.html', {'form':form})
 
 class DelCity(LoginAuthorMixin, DeleteView):
     login_url = '/login'
@@ -367,7 +369,6 @@ class CreateModPerson(LoginRequiredMixin, View):
         return render(request, 'add_mod_person.html', ctx)
 
     def post(self, request, pk=None):
-
         if pk is None:
             form = PersonForm(request.POST)
 
@@ -394,6 +395,7 @@ class CreateModPerson(LoginRequiredMixin, View):
             else:
                 ctx = {'form': form}
                 return render(request, 'add_mod_person.html', ctx)
+
         else:
             instance = Persons.objects.get(pk=pk)
             if instance.author != request.user:
@@ -402,15 +404,12 @@ class CreateModPerson(LoginRequiredMixin, View):
             form = PersonForm(request.POST, instance=instance)
             if form.is_valid():
                 form.save()
-
                 for sibling in instance.siblings.all():
                     if instance not in sibling.siblings.all():
                         sibling.siblings.add(pk)
-
                 for spouse in instance.spouses.all():
                     if instance not in spouse.spouses.all():
                         spouse.spouses.add(pk)
-
                 return redirect('/persons')
             else:
                 ctx = {'form': form}
